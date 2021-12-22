@@ -15,8 +15,8 @@ import com.java.bookclub.repositiories.UserRepository;
 @Service
 public class UserService {
     
-    @Autowired
-    private UserRepository userRepo;
+	@Autowired
+	UserRepository userRepo;
     
     public List<User> allUsers() {
 		return userRepo.findAll();
