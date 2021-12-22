@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -33,11 +34,15 @@ public class MainController {
 	
 	@GetMapping("/book/new") 
 	public String addBook(HttpSession session, @ModelAttribute("newBook")Book newBook,Model model, Long id) {
+		if(session.getAttribute("user_id") == null) {
+			return "redirect:/";
+		}
 		return "addBook.jsp";
 	}
 
 	@PostMapping("/book/new")
 	public String processNewBook(@Valid @ModelAttribute("newBook")Book newBook,BindingResult result, Model model) {
+		
 		if(result.hasErrors()) {
 			List<User> users = userService.allUsers();
 			model.addAttribute("users", users);
@@ -50,14 +55,20 @@ public class MainController {
 	
 	@GetMapping("/show/{id}")
 	public String showOneBook(HttpSession session, @PathVariable("id")Long id, Model model) {
-		Book book = bookService.findOne(id);
+		if(session.getAttribute("user_id") == null) {
+			return "redirect:/";
+		}
+		Book book = bookService.findOneBook(id);
 		model.addAttribute("book", book);
 			return "showBook.jsp";
 	}
 	
 	@GetMapping("/edit/{id}")
 	public String editBook(HttpSession session, @PathVariable("id")Long id, Model model) {
-		Book book = bookService.findOne(id);
+		if(session.getAttribute("user_id") == null) {
+			return "redirect:/";
+		}
+		Book book = bookService.findOneBook(id);
 		model.addAttribute("editBook", book);
 			return "editBook.jsp";
 	}
@@ -65,12 +76,18 @@ public class MainController {
 	@PutMapping("/edit/{id}")
 	public String processEditBook(@Valid @ModelAttribute("editBook")Book editBook, BindingResult result,@PathVariable("id")Long id, HttpSession session) {
 		if(result.hasErrors()) {
-//			Book book = bookService.findOne(id);
-//			model.addAttribute("editBook", book);
 				return "editBook.jsp";
 		} else {
 			bookService.updateBook(editBook);
 			return "redirect:/dashboard";
 		}
 	}
+	
+	@DeleteMapping("/book/{id}/delete")
+	public String deleteBook(@PathVariable("id") Long id) {
+		bookService.deleteBook(id);
+		return "redirect:/dashboard";
+	}
+
+	
 }

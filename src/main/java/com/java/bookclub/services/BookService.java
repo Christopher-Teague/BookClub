@@ -15,15 +15,21 @@ public class BookService{
 	@Autowired
 	BookRepository bookRepo;
 	
-	public List<Book> allBooks() {
-		return bookRepo.findAll();
-	}
+
+		//   CREATE   \\
 	
 	public Book addBook(Book book) {
 		return bookRepo.save(book);
 	}
+
 	
-	public Book findOne(Long id) {
+		//   RETRIEVE   \\
+
+	public List<Book> allBooks() {
+		return bookRepo.findAll();
+	}
+	
+	public Book findOneBook(Long id) {
 		Optional<Book> optionalBook = bookRepo.findById(id);
 		if(optionalBook.isPresent()) {
 			return optionalBook.get();
@@ -31,19 +37,17 @@ public class BookService{
 			return null;
 		}
 	}
-//	
-//	public Book updateOne(Long id) {
-//		Optional<Book> optionalBook = bookRepo.findById(id);
-//		if(optionalBook.isPresent()) {
-//			
-//			return optionalBook.get();
-//		} else {
-//			return null;
-//		}
-//	}
-//	
+
+		//   UPDATE   \\
+
 	public Book updateBook(Book book) {
 		return bookRepo.save(book);
+	}
+
+		//   DELETE   \\
+	
+	public void deleteBook(Long id) {
+		bookRepo.deleteById(id);		
 	}
 
 }
